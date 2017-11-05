@@ -19,7 +19,7 @@
     <string name="config_systemUIFactoryComponent" translatable="false">com.flamingo.systemui.FlamingoSystemUIFactory</string>
 
     <string name="flamingo_qs_tiles" translatable="false">
-         reading_mode,refresh_rate,caffeine,ambient_display,flamingo_nfc,sync,sound
+         reading_mode,refresh_rate,caffeine,ambient_display,flamingo_nfc,sync,sound,livedisplay
     </string>
 
 </resources>

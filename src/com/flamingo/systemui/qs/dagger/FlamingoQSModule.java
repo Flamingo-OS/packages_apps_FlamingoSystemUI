@@ -45,6 +45,7 @@ import com.android.systemui.statusbar.policy.HotspotController;
 import com.android.systemui.statusbar.policy.SafetyController;
 import com.android.systemui.statusbar.policy.WalletController;
 import com.android.systemui.util.settings.SecureSettings;
+import com.flamingo.systemui.statusbar.phone.FlamingoAutoTileManager;
 
 import javax.inject.Named;
 
@@ -76,7 +77,7 @@ public interface FlamingoQSModule {
             WalletController walletController,
             SafetyController safetyController,
             @Named(RBC_AVAILABLE) boolean isReduceBrightColorsAvailable) {
-        AutoTileManager manager = new AutoTileManager(
+        final FlamingoAutoTileManager manager = new FlamingoAutoTileManager(
                 context,
                 autoAddTrackerBuilder,
                 host,

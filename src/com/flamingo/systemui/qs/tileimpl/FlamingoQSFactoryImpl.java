@@ -54,6 +54,7 @@ import com.android.systemui.util.leak.GarbageMonitor;
 import com.flamingo.systemui.qs.tiles.AmbientDisplayTile;
 import com.flamingo.systemui.qs.tiles.CaffeineTile;
 import com.flamingo.systemui.qs.tiles.FlamingoNfcTile;
+import com.flamingo.systemui.qs.tiles.LiveDisplayTile;
 import com.flamingo.systemui.qs.tiles.ReadingModeTile;
 import com.flamingo.systemui.qs.tiles.RefreshRateTile;
 import com.flamingo.systemui.qs.tiles.SoundTile;
@@ -74,6 +75,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<FlamingoNfcTile> mFlamingoNfcTileProvider;
     private final Provider<SyncTile> mSyncTileProvider;
     private final Provider<SoundTile> mSoundTileProvider;
+    private final Provider<LiveDisplayTile> mLiveDisplayTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -114,7 +116,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<AmbientDisplayTile> ambientDisplayTileProvider,
         Provider<FlamingoNfcTile> flamingoNfcTileProvider,
         Provider<SyncTile> syncTileProvider,
-        Provider<SoundTile> soundTileProvider
+        Provider<SoundTile> soundTileProvider,
+        Provider<LiveDisplayTile> liveDisplayTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -137,6 +140,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mFlamingoNfcTileProvider = flamingoNfcTileProvider;
         mSyncTileProvider = syncTileProvider;
         mSoundTileProvider = soundTileProvider;
+        mLiveDisplayTileProvider = liveDisplayTileProvider;
     }
 
     @Override
@@ -157,6 +161,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mSyncTileProvider.get();
             case "sound":
                 return mSoundTileProvider.get();
+            case "livedisplay":
+                return mLiveDisplayTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }
