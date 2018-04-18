@@ -51,6 +51,7 @@ import com.android.systemui.qs.tiles.UiModeNightTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.WorkModeTile;
 import com.android.systemui.util.leak.GarbageMonitor;
+import com.flamingo.systemui.qs.tiles.AODTile;
 import com.flamingo.systemui.qs.tiles.AmbientDisplayTile;
 import com.flamingo.systemui.qs.tiles.AntiFlickerTile;
 import com.flamingo.systemui.qs.tiles.CaffeineTile;
@@ -78,6 +79,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<SoundTile> mSoundTileProvider;
     private final Provider<LiveDisplayTile> mLiveDisplayTileProvider;
     private final Provider<AntiFlickerTile> mAntiFlickerTileProvider;
+    private final Provider<AODTile> mAodTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -120,7 +122,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<SyncTile> syncTileProvider,
         Provider<SoundTile> soundTileProvider,
         Provider<LiveDisplayTile> liveDisplayTileProvider,
-        Provider<AntiFlickerTile> antiFlickerTileProvider
+        Provider<AntiFlickerTile> antiFlickerTileProvider,
+        Provider<AODTile> aodTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -145,6 +148,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mSoundTileProvider = soundTileProvider;
         mLiveDisplayTileProvider = liveDisplayTileProvider;
         mAntiFlickerTileProvider = antiFlickerTileProvider;
+        mAodTileProvider = aodTileProvider;
     }
 
     @Override
@@ -169,6 +173,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mLiveDisplayTileProvider.get();
             case "anti_flicker":
                 return mAntiFlickerTileProvider.get();
+            case "aod":
+                return mAodTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }
