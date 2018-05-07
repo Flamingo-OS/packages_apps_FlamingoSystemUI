@@ -18,9 +18,11 @@
 package com.flamingo.systemui.qs.tiles;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.service.quicksettings.Tile;
 import android.view.View;
 
@@ -45,8 +47,15 @@ import javax.inject.Inject;
 /** Quick settings tile: Caffeine **/
 public final class CaffeineTile extends QSTileImpl<BooleanState> {
 
-    private static final Intent DISPLAY_INTENT = new Intent("com.android.settings.DISPLAY_SETTINGS");
     private static final Icon sIcon = ResourceIcon.get(R.drawable.ic_qs_caffeine);
+
+    private static final int[] DURATIONS = new int[] {
+        5 * 60,   // 5 min
+        10 * 60,  // 10 min
+        30 * 60,  // 30 min
+        -1,       // infinity
+    };
+    private static final int EGG_DURATION = 5 * 60 + 45; // 5 min 45 secs. Perfect.
 
     private final PowerManager.WakeLock mWakeLock;
     private final WakefulnessLifecycle mWakefulnessLifecycle;
@@ -54,13 +63,18 @@ public final class CaffeineTile extends QSTileImpl<BooleanState> {
         new WakefulnessLifecycle.Observer() {
             @Override
             public void onStartedGoingToSleep() {
-                // disable caffeine if user force off (power button)
+                stopCountDown();
                 if (mWakeLock.isHeld()) {
                     mWakeLock.release();
                 }
                 refreshState();
             }
         };
+
+    private CountDownTimer mCountdownTimer;
+    private int mSecondsRemaining;
+    private int mDuration;
+    private long mLastClickTime = -1;
 
     @Inject
     public CaffeineTile(
@@ -99,10 +113,69 @@ public final class CaffeineTile extends QSTileImpl<BooleanState> {
     @Override
     protected void handleDestroy() {
         mWakefulnessLifecycle.removeObserver(mWakefulnessObserver);
+        stopCountDown();
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
         super.handleDestroy();
+    }
+
+    @Override
+    public void handleClick(@Nullable View view) {
+        // If last user clicks < 5 seconds
+        // we cycle different duration
+        // otherwise toggle on/off
+        if (mWakeLock.isHeld() && (mLastClickTime != -1) &&
+                (SystemClock.elapsedRealtime() - mLastClickTime < 5000)) {
+            // cycle duration
+            mDuration++;
+            if (mDuration >= DURATIONS.length) {
+                // all durations cycled, turn it off
+                mDuration = -1;
+                stopCountDown();
+                if (mWakeLock.isHeld()) {
+                    mWakeLock.release();
+                }
+            } else {
+                // change duration
+                startCountDown(DURATIONS[mDuration]);
+                if (!mWakeLock.isHeld()) {
+                    mWakeLock.acquire();
+                }
+            }
+        } else {
+            // toggle
+            if (mWakeLock.isHeld()) {
+                mWakeLock.release();
+                stopCountDown();
+            } else {
+                mWakeLock.acquire();
+                mDuration = 0;
+                startCountDown(DURATIONS[mDuration]);
+            }
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+        refreshState();
+    }
+
+    @Override
+    protected void handleLongClick(@Nullable View view) {
+        if (!mWakeLock.isHeld()) {
+            mWakeLock.acquire();
+            startCountDown(EGG_DURATION);
+        } else {
+            mWakeLock.release();
+            stopCountDown();
+            // turn it off
+            mDuration = -1;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+        refreshState();
+    }
+
+    @Override
+    public Intent getLongClickIntent() {
+        return null;
     }
 
     @Override
@@ -115,35 +188,56 @@ public final class CaffeineTile extends QSTileImpl<BooleanState> {
         return MetricsEvent.FLAMINGO;
     }
 
-    @Override
-    public void handleSetListening(boolean listening) {}
-
-    @Override
-    public void handleClick(@Nullable View view) {
-        // toggle
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        } else {
-            mWakeLock.acquire();
+    private void startCountDown(long duration) {
+        stopCountDown();
+        mSecondsRemaining = (int)duration;
+        if (duration == -1) {
+            // infinity timing, no need to start timer
+            return;
         }
-        refreshState();
+        mCountdownTimer = new CountDownTimer(duration * 1000, 1000) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mSecondsRemaining = (int) (millisUntilFinished / 1000);
+                refreshState();
+            }
+
+            @Override
+            public void onFinish() {
+                if (mWakeLock.isHeld())
+                    mWakeLock.release();
+                refreshState();
+            }
+
+        }.start();
     }
 
-    @Override
-    public Intent getLongClickIntent() {
-        return DISPLAY_INTENT;
+    private void stopCountDown() {
+        if (mCountdownTimer != null) {
+            mCountdownTimer.cancel();
+            mCountdownTimer = null;
+        }
+    }
+
+    private String formatValueWithRemainingTime() {
+        if (mSecondsRemaining == -1) {
+            return "\u221E"; // infinity
+        }
+        return String.format("%02d:%02d",
+                        mSecondsRemaining / 60 % 60, mSecondsRemaining % 60);
     }
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         state.value = mWakeLock.isHeld();
         if (state.value) {
-            state.slash.isSlashed = false;
+            state.secondaryLabel = formatValueWithRemainingTime();
             state.contentDescription =  mContext.getString(
                     R.string.accessibility_quick_settings_caffeine_on);
             state.state = Tile.STATE_ACTIVE;
         } else {
-            state.slash.isSlashed = true;
+            state.secondaryLabel = mContext.getString(R.string.quick_settings_caffeine_label_off);
             state.contentDescription =  mContext.getString(
                     R.string.accessibility_quick_settings_caffeine_off);
             state.state = Tile.STATE_INACTIVE;
