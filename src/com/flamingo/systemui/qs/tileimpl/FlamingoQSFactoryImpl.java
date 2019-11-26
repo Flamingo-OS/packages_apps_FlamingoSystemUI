@@ -55,6 +55,7 @@ import com.flamingo.systemui.qs.tiles.AODTile;
 import com.flamingo.systemui.qs.tiles.AmbientDisplayTile;
 import com.flamingo.systemui.qs.tiles.AntiFlickerTile;
 import com.flamingo.systemui.qs.tiles.CaffeineTile;
+import com.flamingo.systemui.qs.tiles.DataSwitchTile;
 import com.flamingo.systemui.qs.tiles.FlamingoNfcTile;
 import com.flamingo.systemui.qs.tiles.LiveDisplayTile;
 import com.flamingo.systemui.qs.tiles.ReadingModeTile;
@@ -80,6 +81,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<LiveDisplayTile> mLiveDisplayTileProvider;
     private final Provider<AntiFlickerTile> mAntiFlickerTileProvider;
     private final Provider<AODTile> mAodTileProvider;
+    private final Provider<DataSwitchTile> mDataSwitchTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -123,7 +125,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<SoundTile> soundTileProvider,
         Provider<LiveDisplayTile> liveDisplayTileProvider,
         Provider<AntiFlickerTile> antiFlickerTileProvider,
-        Provider<AODTile> aodTileProvider
+        Provider<AODTile> aodTileProvider,
+        Provider<DataSwitchTile> dataSwitchTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -149,6 +152,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mLiveDisplayTileProvider = liveDisplayTileProvider;
         mAntiFlickerTileProvider = antiFlickerTileProvider;
         mAodTileProvider = aodTileProvider;
+        mDataSwitchTileProvider = dataSwitchTileProvider;
     }
 
     @Override
@@ -175,6 +179,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mAntiFlickerTileProvider.get();
             case "aod":
                 return mAodTileProvider.get();
+            case "dataswitch":
+                return mDataSwitchTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }
