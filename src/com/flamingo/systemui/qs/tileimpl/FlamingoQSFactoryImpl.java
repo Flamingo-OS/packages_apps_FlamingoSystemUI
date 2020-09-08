@@ -52,6 +52,7 @@ import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.WorkModeTile;
 import com.android.systemui.util.leak.GarbageMonitor;
 import com.flamingo.systemui.qs.tiles.AmbientDisplayTile;
+import com.flamingo.systemui.qs.tiles.AntiFlickerTile;
 import com.flamingo.systemui.qs.tiles.CaffeineTile;
 import com.flamingo.systemui.qs.tiles.FlamingoNfcTile;
 import com.flamingo.systemui.qs.tiles.LiveDisplayTile;
@@ -76,6 +77,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<SyncTile> mSyncTileProvider;
     private final Provider<SoundTile> mSoundTileProvider;
     private final Provider<LiveDisplayTile> mLiveDisplayTileProvider;
+    private final Provider<AntiFlickerTile> mAntiFlickerTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -117,7 +119,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<FlamingoNfcTile> flamingoNfcTileProvider,
         Provider<SyncTile> syncTileProvider,
         Provider<SoundTile> soundTileProvider,
-        Provider<LiveDisplayTile> liveDisplayTileProvider
+        Provider<LiveDisplayTile> liveDisplayTileProvider,
+        Provider<AntiFlickerTile> antiFlickerTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -141,6 +144,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mSyncTileProvider = syncTileProvider;
         mSoundTileProvider = soundTileProvider;
         mLiveDisplayTileProvider = liveDisplayTileProvider;
+        mAntiFlickerTileProvider = antiFlickerTileProvider;
     }
 
     @Override
@@ -163,6 +167,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mSoundTileProvider.get();
             case "livedisplay":
                 return mLiveDisplayTileProvider.get();
+            case "anti_flicker":
+                return mAntiFlickerTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }

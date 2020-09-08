@@ -45,7 +45,7 @@ import javax.inject.Named;
 public final class FlamingoAutoTileManager extends AutoTileManager {
 
     private static final String LIVEDISPLAY_INTENT = "lineageos.intent.action.INITIALIZE_LIVEDISPLAY";
-    private static final List<String> LIVEDISPLAY_TILES = List.of("livedisplay");
+    private static final List<String> LIVEDISPLAY_TILES = List.of("livedisplay", "anti_flicker");
 
     private final BroadcastReceiver mLiveDisplayReceiver = new BroadcastReceiver() {
         @Override
