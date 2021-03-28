@@ -56,6 +56,7 @@ import com.flamingo.systemui.qs.tiles.CaffeineTile;
 import com.flamingo.systemui.qs.tiles.FlamingoNfcTile;
 import com.flamingo.systemui.qs.tiles.ReadingModeTile;
 import com.flamingo.systemui.qs.tiles.RefreshRateTile;
+import com.flamingo.systemui.qs.tiles.SoundTile;
 import com.flamingo.systemui.qs.tiles.SyncTile;
 
 import javax.inject.Inject;
@@ -72,6 +73,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<AmbientDisplayTile> mAmbientDisplayTileProvider;
     private final Provider<FlamingoNfcTile> mFlamingoNfcTileProvider;
     private final Provider<SyncTile> mSyncTileProvider;
+    private final Provider<SoundTile> mSoundTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -111,7 +113,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<CaffeineTile> caffeineTileProvider,
         Provider<AmbientDisplayTile> ambientDisplayTileProvider,
         Provider<FlamingoNfcTile> flamingoNfcTileProvider,
-        Provider<SyncTile> syncTileProvider
+        Provider<SyncTile> syncTileProvider,
+        Provider<SoundTile> soundTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -133,6 +136,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mAmbientDisplayTileProvider = ambientDisplayTileProvider;
         mFlamingoNfcTileProvider = flamingoNfcTileProvider;
         mSyncTileProvider = syncTileProvider;
+        mSoundTileProvider = soundTileProvider;
     }
 
     @Override
@@ -151,6 +155,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mFlamingoNfcTileProvider.get();
             case "sync":
                 return mSyncTileProvider.get();
+            case "sound":
+                return mSoundTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }
