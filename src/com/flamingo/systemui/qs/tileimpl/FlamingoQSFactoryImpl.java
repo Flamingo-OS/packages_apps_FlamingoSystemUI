@@ -52,6 +52,7 @@ import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.WorkModeTile;
 import com.android.systemui.util.leak.GarbageMonitor;
 import com.flamingo.systemui.qs.tiles.ReadingModeTile;
+import com.flamingo.systemui.qs.tiles.RefreshRateTile;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -62,6 +63,7 @@ import dagger.Lazy;
 public class FlamingoQSFactoryImpl extends QSFactoryImpl {
 
     private final Provider<ReadingModeTile> mReadingModeTileProvider;
+    private final Provider<RefreshRateTile> mRefreshRateTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -96,7 +98,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<QRCodeScannerTile> qrCodeScannerTileProvider,
         Provider<OneHandedModeTile> oneHandedModeTileProvider,
         Provider<ColorCorrectionTile> colorCorrectionTileProvider,
-        Provider<ReadingModeTile> readingModeTileProvider
+        Provider<ReadingModeTile> readingModeTileProvider,
+        Provider<RefreshRateTile> refreshRateTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -113,14 +116,16 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         );
 
         mReadingModeTileProvider = readingModeTileProvider;
+        mRefreshRateTileProvider = refreshRateTileProvider;
     }
 
     @Nullable
     protected QSTileImpl createTileInternal(String tileSpec) {
-        // Additional tile creation goes first.
         switch (tileSpec) {
             case "reading_mode":
                 return mReadingModeTileProvider.get();
+            case "refresh_rate":
+                return mRefreshRateTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }

@@ -16,7 +16,7 @@
 <resources>
 
     <string name="flamingo_qs_tiles" translatable="false">
-         reading_mode
+         reading_mode,refresh_rate
     </string>
 
 </resources>
