@@ -13,11 +13,18 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!-- Reader mode QS tile -->
     <string name="quick_settings_reading_mode">Reading mode</string>
     <string name="accessibility_quick_settings_reading_mode_on">Reading mode on.</string>
     <string name="accessibility_quick_settings_reading_mode_off">Reading mode off.</string>
+
+    <!-- Refresh Rate Tile -->
+    <string name="refresh_rate_tile_label">Refresh rate</string>
+    <string name="refresh_rate_auto_mode_placeholder">
+        Auto (<xliff:g id="min_refresh_rate" example="60">%1$d</xliff:g> - <xliff:g id="max_refresh_rate" example="60">%2$d</xliff:g> Hz)
+    </string>
+    <string name="refresh_rate_forced_mode_placeholder"><xliff:g id="refresh_rate" example="60">%1$d</xliff:g> Hz</string>
 
 </resources>
