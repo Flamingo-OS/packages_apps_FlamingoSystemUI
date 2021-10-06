@@ -22,7 +22,6 @@ import com.android.systemui.dagger.DependencyProvider;
 import com.android.systemui.dagger.SysUIComponent;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.SystemUIBinder;
-import com.android.systemui.dagger.SystemUICoreStartableModule;
 import com.android.systemui.dagger.SystemUIModule;
 
 import dagger.Subcomponent;
@@ -34,7 +33,7 @@ import dagger.Subcomponent;
         DependencyProvider.class,
         SystemUIBinder.class,
         SystemUIModule.class,
-        SystemUICoreStartableModule.class,
+        FlamingoSystemUICoreStartableModule.class,
         FlamingoReferenceSystemUIModule.class})
 public interface FlamingoSysUIComponent extends SysUIComponent {
 
