@@ -17,5 +17,6 @@
 package com.flamingo.systemui.biometrics
 
 enum class HbmProviderType {
-    DEFAULT
+    DEFAULT,
+    PIXEL
 }

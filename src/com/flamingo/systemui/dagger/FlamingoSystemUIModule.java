@@ -20,6 +20,7 @@ package com.flamingo.systemui.dagger;
 import android.app.AlarmManager;
 import android.app.INotificationManager;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -34,6 +35,7 @@ import com.android.systemui.SystemUIFactory;
 import com.android.systemui.appops.dagger.AppOpsModule;
 import com.android.systemui.assist.AssistModule;
 import com.android.systemui.biometrics.AlternateUdfpsTouchProvider;
+import com.android.systemui.biometrics.AuthController;
 import com.android.systemui.biometrics.UdfpsHbmProvider;
 import com.android.systemui.biometrics.dagger.BiometricsModule;
 import com.android.systemui.broadcast.BroadcastDispatcher;
@@ -44,6 +46,7 @@ import com.android.systemui.dagger.ContextComponentResolver;
 import com.android.systemui.dagger.PluginModule;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.qualifiers.Main;
+import com.android.systemui.dagger.qualifiers.UiBackground;
 import com.android.systemui.demomode.dagger.DemoModeModule;
 import com.android.systemui.doze.dagger.DozeComponent;
 import com.android.systemui.dreams.dagger.DreamModule;
@@ -105,6 +108,7 @@ import com.android.wm.shell.bubbles.Bubbles;
 import com.android.wm.shell.dagger.DynamicOverride;
 import com.flamingo.systemui.biometrics.DefaultUdfpsHbmProvider;
 import com.flamingo.systemui.biometrics.HbmProviderType;
+import com.flamingo.systemui.biometrics.PixelUdfpsHbmProvider;
 import com.flamingo.systemui.flags.dagger.FlamingoFlagsModule;
 
 import com.google.android.systemui.smartspace.BcSmartspaceDataProvider;
@@ -202,7 +206,12 @@ public abstract class FlamingoSystemUIModule {
 
     @SysUISingleton
     @Provides
-    static Optional<UdfpsHbmProvider> provideUdfpsHbmProvider(Context context) {
+    static Optional<UdfpsHbmProvider> provideUdfpsHbmProvider(
+        Context context,
+        AuthController authController,
+        @UiBackground Executor bgExecutor,
+        @Main Handler handler
+    ) {
         final String providerString = context.getString(R.string.config_udfpsHbmProvider).toUpperCase();
         final HbmProviderType provider;
         try {
@@ -214,6 +223,14 @@ public abstract class FlamingoSystemUIModule {
         switch (provider) {
             case DEFAULT: {
                 return Optional.of(new DefaultUdfpsHbmProvider());
+            }
+            case PIXEL: {
+                return Optional.of(new PixelUdfpsHbmProvider(
+                    context,
+                    authController,
+                    bgExecutor,
+                    handler
+                ));
             }
             default:
                 return Optional.empty();
