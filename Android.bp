@@ -27,6 +27,7 @@ genrule {
     ],
     srcs: [
         "res/**/*",
+        "res-keyguard/**/*",
     ],
     out: [
         "FlamingoSystemUI_res.zip",
