@@ -30,6 +30,7 @@ import dagger.Subcomponent;
 @SysUISingleton
 @Subcomponent(modules = {
         DefaultComponentBinder.class,
+        FlamingoServiceBinder.class,
         DependencyProvider.class,
         SystemUIBinder.class,
         SystemUIModule.class,
