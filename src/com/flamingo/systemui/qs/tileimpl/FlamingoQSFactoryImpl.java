@@ -58,6 +58,7 @@ import com.flamingo.systemui.qs.tiles.CaffeineTile;
 import com.flamingo.systemui.qs.tiles.DataSwitchTile;
 import com.flamingo.systemui.qs.tiles.FPSInfoTile;
 import com.flamingo.systemui.qs.tiles.FlamingoNfcTile;
+import com.flamingo.systemui.qs.tiles.HeadsUpTile;
 import com.flamingo.systemui.qs.tiles.LiveDisplayTile;
 import com.flamingo.systemui.qs.tiles.ReadingModeTile;
 import com.flamingo.systemui.qs.tiles.RefreshRateTile;
@@ -84,6 +85,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<AODTile> mAodTileProvider;
     private final Provider<DataSwitchTile> mDataSwitchTileProvider;
     private final Provider<FPSInfoTile> mFpsInfoTileProvider;
+    private final Provider<HeadsUpTile> mHeadsUpTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -129,7 +131,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<AntiFlickerTile> antiFlickerTileProvider,
         Provider<AODTile> aodTileProvider,
         Provider<DataSwitchTile> dataSwitchTileProvider,
-        Provider<FPSInfoTile> fpsInfoTileProvider
+        Provider<FPSInfoTile> fpsInfoTileProvider,
+        Provider<HeadsUpTile> headsUpTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -157,6 +160,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mAodTileProvider = aodTileProvider;
         mDataSwitchTileProvider = dataSwitchTileProvider;
         mFpsInfoTileProvider = fpsInfoTileProvider;
+        mHeadsUpTileProvider = headsUpTileProvider;
     }
 
     @Override
@@ -187,6 +191,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mDataSwitchTileProvider.get();
             case "fpsinfo":
                 return mFpsInfoTileProvider.get();
+            case "headsup":
+                return mHeadsUpTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }
