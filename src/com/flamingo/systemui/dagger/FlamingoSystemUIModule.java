@@ -20,6 +20,7 @@ package com.flamingo.systemui.dagger;
 import android.app.AlarmManager;
 import android.app.INotificationManager;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -28,6 +29,7 @@ import com.android.keyguard.clock.ClockModule;
 import com.android.keyguard.dagger.KeyguardBouncerComponent;
 import com.android.systemui.BootCompleteCache;
 import com.android.systemui.BootCompleteCacheImpl;
+import com.android.systemui.R;
 import com.android.systemui.SystemUIFactory;
 import com.android.systemui.appops.dagger.AppOpsModule;
 import com.android.systemui.assist.AssistModule;
@@ -101,6 +103,8 @@ import com.android.systemui.wallet.dagger.WalletModule;
 import com.android.systemui.wmshell.BubblesManager;
 import com.android.wm.shell.bubbles.Bubbles;
 import com.android.wm.shell.dagger.DynamicOverride;
+import com.flamingo.systemui.biometrics.DefaultUdfpsHbmProvider;
+import com.flamingo.systemui.biometrics.HbmProviderType;
 import com.flamingo.systemui.flags.dagger.FlamingoFlagsModule;
 
 import com.google.android.systemui.smartspace.BcSmartspaceDataProvider;
@@ -158,6 +162,8 @@ import dagger.Provides;
         })
 public abstract class FlamingoSystemUIModule {
 
+    private static final String TAG = FlamingoSystemUIModule.class.getSimpleName();
+
     @Binds
     abstract BootCompleteCache bindBootCompleteCache(BootCompleteCacheImpl bootCompleteCache);
 
@@ -194,8 +200,25 @@ public abstract class FlamingoSystemUIModule {
     @BindsOptionalOf
     abstract CentralSurfaces optionalCentralSurfaces();
 
-    @BindsOptionalOf
-    abstract UdfpsHbmProvider optionalUdfpsHbmProvider();
+    @SysUISingleton
+    @Provides
+    static Optional<UdfpsHbmProvider> provideUdfpsHbmProvider(Context context) {
+        final String providerString = context.getString(R.string.config_udfpsHbmProvider).toUpperCase();
+        final HbmProviderType provider;
+        try {
+            provider = HbmProviderType.valueOf(providerString);
+        } catch(IllegalArgumentException e) {
+            Log.e(TAG, "Unknown hbm provider " + providerString);
+            return Optional.empty();
+        }
+        switch (provider) {
+            case DEFAULT: {
+                return Optional.of(new DefaultUdfpsHbmProvider());
+            }
+            default:
+                return Optional.empty();
+        }
+    }
 
     @BindsOptionalOf
     abstract AlternateUdfpsTouchProvider optionalUdfpsTouchProvider();

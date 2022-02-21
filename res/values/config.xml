@@ -33,4 +33,7 @@
         <item>@*android:string/status_bar_call_strength</item>
     </string-array>
 
+    <!-- UDFPS hbm provider type as given in HbmProviderType enum class -->
+    <string name="config_udfpsHbmProvider">default</string>
+
 </resources>
