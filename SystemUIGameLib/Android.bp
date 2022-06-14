@@ -1,0 +1,15 @@
+filegroup {
+    name: "SystemUIGameLib-src",
+    srcs: [
+        "src/main/java/**/*.kt",
+    ],
+    path: "src/main/java",
+}
+
+filegroup {
+    name: "SystemUIGameLib-aidl",
+    srcs: [
+        "src/main/aidl/**/*.aidl",
+    ],
+    path: "src/main/aidl",
+}

@@ -33,6 +33,11 @@
     <!-- DataSwitch tile -->
     <uses-permission android:name="android.permission.WRITE_APN_SETTINGS" />
 
+    <permission
+        android:name="com.flamingo.permission.MANAGE_GAMESPACE"
+        android:protectionLevel="signature|privileged" />
+    <uses-permission android:name="com.flamingo.permission.MANAGE_GAMESPACE" />
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"

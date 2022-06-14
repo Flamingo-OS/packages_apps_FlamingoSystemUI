@@ -43,6 +43,7 @@ import com.android.systemui.util.NotificationChannels
 import com.android.systemui.util.leak.GarbageMonitor
 import com.android.systemui.volume.VolumeUI
 import com.android.systemui.wmshell.WMShell
+import com.flamingo.systemui.game.GameSpaceServiceDelegate
 import com.flamingo.systemui.theme.FlamingoThemeOverlayController
 
 import dagger.Binds
@@ -207,4 +208,10 @@ abstract class FlamingoSystemUICoreStartableModule {
     @IntoMap
     @ClassKey(KeyguardLiftController::class)
     abstract fun bindKeyguardLiftController(sysui: KeyguardLiftController): CoreStartable
+
+    /** Inject into GameSpaceServiceDelegate.  */
+    @Binds
+    @IntoMap
+    @ClassKey(GameSpaceServiceDelegate::class)
+    abstract fun bindGameSpaceServiceDelegate(sysui: GameSpaceServiceDelegate): CoreStartable
 }

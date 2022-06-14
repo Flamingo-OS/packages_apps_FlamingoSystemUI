@@ -17,6 +17,8 @@ filegroup {
     srcs: [
         "src/**/*.kt",
         "src/**/*.java",
+        ":SystemUIGameLib-src",
+        ":SystemUIGameLib-aidl",
     ],
 }
 
