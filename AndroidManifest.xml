@@ -38,6 +38,15 @@
         android:protectionLevel="signature|privileged" />
     <uses-permission android:name="com.flamingo.permission.MANAGE_GAMESPACE" />
 
+    <!-- Smartspace -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <permission android:name="com.android.systemui.permission.SEND_ALERT_BROADCASTS" android:protectionLevel="preinstalled|signature"/>
+    <uses-permission android:name="com.google.android.deskclock.permission.RECEIVE_ALERT_BROADCASTS"/>
+    <uses-permission android:name="com.google.android.apps.nexuslauncher.permission.QSB"/>
+    <protected-broadcast android:name="com.google.android.systemui.smartspace.CLICK_EVENT"/>
+    <protected-broadcast android:name="com.google.android.systemui.smartspace.ENABLE_UPDATE"/>
+    <protected-broadcast android:name="com.google.android.systemui.smartspace.EXPIRE_EVENT"/>
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"
@@ -65,6 +74,14 @@
                 <action android:name="android.intent.action.APP_ERROR" />
             </intent-filter>
         </activity>
+
+        <provider android:name=".keyguard.KeyguardSliceProvider"
+                  android:authorities="com.android.systemui.keyguard"
+                  android:grantUriPermissions="true"
+                  android:exported="true"
+                  android:enabled="false"
+                  tools:node="replace">
+        </provider>
 
         <!-- FPS Info -->
         <service android:name="com.flamingo.systemui.FPSInfoService"

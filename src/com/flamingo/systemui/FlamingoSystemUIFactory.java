@@ -23,6 +23,9 @@ import com.flamingo.systemui.dagger.DaggerFlamingoGlobalRootComponent;
 
 import com.android.systemui.SystemUIFactory;
 import com.android.systemui.dagger.GlobalRootComponent;
+import com.flamingo.systemui.dagger.FlamingoSysUIComponent;
+
+import java.util.concurrent.ExecutionException;
 
 public class FlamingoSystemUIFactory extends SystemUIFactory {
     @Override
@@ -30,5 +33,14 @@ public class FlamingoSystemUIFactory extends SystemUIFactory {
         return DaggerFlamingoGlobalRootComponent.builder()
                 .context(context)
                 .build();
+    }
+
+    @Override
+    public void init(Context context, boolean fromTest)
+            throws ExecutionException, InterruptedException {
+        super.init(context, fromTest);
+        if (shouldInitializeComponents()) {
+            ((FlamingoSysUIComponent) getSysUIComponent()).createKeyguardSmartspaceController();
+        }
     }
 }
