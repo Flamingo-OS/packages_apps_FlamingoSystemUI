@@ -84,5 +84,6 @@ android_app {
     dxflags: ["--multi-dex"],
     required: [
         "privapp_whitelist_com.android.systemui",
+        "FlamingoSystemUIOverlay",
     ],
 }
