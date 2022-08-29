@@ -42,7 +42,6 @@ import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.power.EnhancedEstimates;
 import com.android.systemui.power.dagger.PowerModule;
 import com.android.systemui.qs.dagger.QSModule;
-import com.android.systemui.qs.tileimpl.QSFactoryImpl;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.recents.RecentsImplementation;
 import com.android.systemui.statusbar.CommandQueue;
@@ -73,6 +72,8 @@ import com.android.systemui.statusbar.policy.IndividualSensorPrivacyControllerIm
 import com.android.systemui.statusbar.policy.SensorPrivacyController;
 import com.android.systemui.statusbar.policy.SensorPrivacyControllerImpl;
 import com.android.systemui.volume.dagger.VolumeModule;
+import com.flamingo.systemui.qs.dagger.FlamingoQSModule;
+import com.flamingo.systemui.qs.tileimpl.FlamingoQSFactoryImpl;
 
 import javax.inject.Named;
 
@@ -83,7 +84,7 @@ import dagger.Provides;
 @Module(includes = {
         MediaModule.class,
         PowerModule.class,
-        QSModule.class,
+        FlamingoQSModule.class,
         StartCentralSurfacesModule.class,
         VolumeModule.class
 })
@@ -144,7 +145,7 @@ public abstract class FlamingoReferenceSystemUIModule {
     /** */
     @Binds
     @SysUISingleton
-    public abstract QSFactory bindQSFactory(QSFactoryImpl qsFactoryImpl);
+    public abstract QSFactory bindQSFactory(FlamingoQSFactoryImpl flamingoQsFactoryImpl);
 
     @Binds
     abstract DockManager bindDockManager(DockManagerImpl dockManager);

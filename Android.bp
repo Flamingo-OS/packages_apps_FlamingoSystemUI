@@ -22,7 +22,9 @@ android_library {
     srcs: [
         "src/**/*.java",
     ],
-    resource_dirs: [],
+    resource_dirs: [
+        "res",
+    ],
     static_libs: [
         "SystemUI-core",
         "dagger2",
