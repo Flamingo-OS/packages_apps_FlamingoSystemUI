@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+soong_config_module_type_import {
+    from: "frameworks/base/packages/SystemUI/Android.bp",
+    module_types: ["systemui_optimized_java_defaults"],
+}
+
 android_library {
     name: "FlamingoSystemUI-core",
     srcs: [
@@ -30,15 +35,7 @@ android_library {
     manifest: "AndroidManifest.xml",
 }
 
-soong_config_module_type {
-    name: "flamingo_systemui_optimized_java_defaults",
-    module_type: "java_defaults",
-    config_namespace: "ANDROID",
-    bool_variables: ["SYSTEMUI_OPTIMIZE_JAVA"],
-    properties: ["optimize"],
-}
-
-flamingo_systemui_optimized_java_defaults {
+systemui_optimized_java_defaults {
     name: "FlamingoSystemUI_app_defaults",
     soong_config_variables: {
         SYSTEMUI_OPTIMIZE_JAVA: {
@@ -61,7 +58,6 @@ android_app {
     name: "FlamingoSystemUI",
     defaults: [
         "platform_app_defaults",
-        "SystemUI_app_defaults",
         "FlamingoSystemUI_app_defaults",
     ],
     overrides: [
