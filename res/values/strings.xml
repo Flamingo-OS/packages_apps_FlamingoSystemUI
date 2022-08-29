@@ -15,8 +15,9 @@
 -->
 <resources>
 
-    <string name="flamingo_qs_tiles" translatable="false">
-         reading_mode
-    </string>
+    <!-- Reader mode QS tile -->
+    <string name="quick_settings_reading_mode">Reading mode</string>
+    <string name="accessibility_quick_settings_reading_mode_on">Reading mode on.</string>
+    <string name="accessibility_quick_settings_reading_mode_off">Reading mode off.</string>
 
 </resources>

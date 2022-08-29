@@ -51,6 +51,7 @@ import com.android.systemui.qs.tiles.UiModeNightTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.WorkModeTile;
 import com.android.systemui.util.leak.GarbageMonitor;
+import com.flamingo.systemui.qs.tiles.ReadingModeTile;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -59,6 +60,8 @@ import dagger.Lazy;
 
 @SysUISingleton
 public class FlamingoQSFactoryImpl extends QSFactoryImpl {
+
+    private final Provider<ReadingModeTile> mReadingModeTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -92,7 +95,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<QuickAccessWalletTile> quickAccessWalletTileProvider,
         Provider<QRCodeScannerTile> qrCodeScannerTileProvider,
         Provider<OneHandedModeTile> oneHandedModeTileProvider,
-        Provider<ColorCorrectionTile> colorCorrectionTileProvider
+        Provider<ColorCorrectionTile> colorCorrectionTileProvider,
+        Provider<ReadingModeTile> readingModeTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -107,11 +111,18 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
             quickAccessWalletTileProvider, qrCodeScannerTileProvider, oneHandedModeTileProvider,
             colorCorrectionTileProvider
         );
+
+        mReadingModeTileProvider = readingModeTileProvider;
     }
 
     @Nullable
     protected QSTileImpl createTileInternal(String tileSpec) {
         // Additional tile creation goes first.
-        return super.createTileInternal(tileSpec);
+        switch (tileSpec) {
+            case "reading_mode":
+                return mReadingModeTileProvider.get();
+            default:
+                return super.createTileInternal(tileSpec);
+        }
     }
 }

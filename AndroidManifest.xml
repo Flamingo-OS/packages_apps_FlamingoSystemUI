@@ -20,4 +20,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         coreApp="true">
 
+    <!-- ReadingMode tile -->
+    <uses-permission android:name="lineageos.permission.HARDWARE_ABSTRACTION_ACCESS" />
+
 </manifest>
