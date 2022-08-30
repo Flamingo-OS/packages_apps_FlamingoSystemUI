@@ -36,9 +36,11 @@ import dagger.Subcomponent;
         SystemUICoreStartableModule.class,
         FlamingoReferenceSystemUIModule.class})
 public interface FlamingoSysUIComponent extends SysUIComponent {
+
     @SysUISingleton
     @Subcomponent.Builder
     interface Builder extends SysUIComponent.Builder {
+        @Override
         FlamingoSysUIComponent build();
     }
 }

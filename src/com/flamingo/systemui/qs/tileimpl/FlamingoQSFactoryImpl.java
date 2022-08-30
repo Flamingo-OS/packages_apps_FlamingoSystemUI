@@ -119,6 +119,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mRefreshRateTileProvider = refreshRateTileProvider;
     }
 
+    @Override
     @Nullable
     protected QSTileImpl createTileInternal(String tileSpec) {
         switch (tileSpec) {
