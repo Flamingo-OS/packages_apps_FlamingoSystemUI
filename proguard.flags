@@ -1,4 +1,1 @@
--include ../../../frameworks/base/packages/SystemUI/proguard.flags
-
--keep class com.flamingo.systemui.FlamingoSystemUIFactory
--keep,allowoptimization,allowaccessmodification class com.flamingo.systemui.DaggerFlamingoGlobalRootComponent$FlamingoComponentImpl { !synthetic *; }
+-keep class com.flamingo.systemui.** { *; }

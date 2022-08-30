@@ -12,76 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-soong_config_module_type_import {
-    from: "frameworks/base/packages/SystemUI/Android.bp",
-    module_types: ["systemui_optimized_java_defaults"],
-}
-
-android_library {
-    name: "FlamingoSystemUI-core",
+filegroup {
+    name: "FlamingoSystemUI_src",
     srcs: [
+        "src/**/*.kt",
         "src/**/*.java",
     ],
-    resource_dirs: [
-        "res",
-    ],
-    static_libs: [
-        "SystemUI-core",
-        "dagger2",
-        "jsr330",
-    ],
-    plugins: ["dagger2-compiler"],
-    lint: {
-        extra_check_modules: ["SystemUILintChecker"],
-    },
-    manifest: "AndroidManifest.xml",
 }
 
-systemui_optimized_java_defaults {
-    name: "FlamingoSystemUI_app_defaults",
-    soong_config_variables: {
-        SYSTEMUI_OPTIMIZE_JAVA: {
-            optimize: {
-                enabled: true,
-                optimize: true,
-                shrink: true,
-                proguard_flags_files: ["proguard.flags"],
-            },
-            conditions_default: {
-                optimize: {
-                    proguard_flags_files: ["proguard.flags"],
-                },
-            },
-        },
-    },
+genrule {
+    name: "FlamingoSystemUI_res",
+    tools: [
+        "soong_zip",
+    ],
+    srcs: [
+        "res/**/*",
+    ],
+    out: [
+        "FlamingoSystemUI_res.zip",
+    ],
+    cmd: "INPUTS=($(in)) && "
+        + "RES_DIR=$$(dirname $$(dirname $${INPUTS[0]})) && "
+        + "$(location soong_zip) -o $(out) -C $$RES_DIR -D $$RES_DIR"
 }
 
-android_app {
-    name: "FlamingoSystemUI",
-    defaults: [
-        "platform_app_defaults",
-        "FlamingoSystemUI_app_defaults",
+filegroup {
+    name: "FlamingoSystemUI_manifest",
+    srcs: [
+        "AndroidManifest.xml",
     ],
-    overrides: [
-        "SystemUI",
-    ],
-    static_libs: [
-        "FlamingoSystemUI-core",
-    ],
-    resource_dirs: [],
-    platform_apis: true,
-    system_ext_specific: true,
-    certificate: "platform",
-    privileged: true,
-    libs: [
-        "android.car",
-        "ims-common",
-        "extphonelib",
-    ],
-    enforce_uses_libs: false,
-    dxflags: ["--multi-dex"],
-    required: [
-        "privapp_whitelist_com.android.systemui",
-        "FlamingoSystemUIOverlay",
+}
+
+filegroup {
+    name: "FlamingoSystemUI_proguard_flags",
+    srcs: [
+        "proguard.flags",
     ],
 }

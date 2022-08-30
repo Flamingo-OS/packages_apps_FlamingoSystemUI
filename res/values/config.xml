@@ -15,6 +15,9 @@
 -->
 <resources>
 
+    <!-- SystemUIFactory component -->
+    <string name="config_systemUIFactoryComponent" translatable="false">com.flamingo.systemui.FlamingoSystemUIFactory</string>
+
     <string name="flamingo_qs_tiles" translatable="false">
          reading_mode,refresh_rate
     </string>
