@@ -53,6 +53,7 @@ import com.android.systemui.qs.tiles.WorkModeTile;
 import com.android.systemui.util.leak.GarbageMonitor;
 import com.flamingo.systemui.qs.tiles.AmbientDisplayTile;
 import com.flamingo.systemui.qs.tiles.CaffeineTile;
+import com.flamingo.systemui.qs.tiles.FlamingoNfcTile;
 import com.flamingo.systemui.qs.tiles.ReadingModeTile;
 import com.flamingo.systemui.qs.tiles.RefreshRateTile;
 
@@ -68,6 +69,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<RefreshRateTile> mRefreshRateTileProvider;
     private final Provider<CaffeineTile> mCaffeineTileProvider;
     private final Provider<AmbientDisplayTile> mAmbientDisplayTileProvider;
+    private final Provider<FlamingoNfcTile> mFlamingoNfcTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -105,7 +107,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<ReadingModeTile> readingModeTileProvider,
         Provider<RefreshRateTile> refreshRateTileProvider,
         Provider<CaffeineTile> caffeineTileProvider,
-        Provider<AmbientDisplayTile> ambientDisplayTileProvider
+        Provider<AmbientDisplayTile> ambientDisplayTileProvider,
+        Provider<FlamingoNfcTile> flamingoNfcTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -125,6 +128,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mRefreshRateTileProvider = refreshRateTileProvider;
         mCaffeineTileProvider = caffeineTileProvider;
         mAmbientDisplayTileProvider = ambientDisplayTileProvider;
+        mFlamingoNfcTileProvider = flamingoNfcTileProvider;
     }
 
     @Override
@@ -139,6 +143,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mCaffeineTileProvider.get();
             case "ambient_display":
                 return mAmbientDisplayTileProvider.get();
+            case "flamingo_nfc":
+                return mFlamingoNfcTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }
