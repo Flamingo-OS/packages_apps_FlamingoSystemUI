@@ -41,7 +41,7 @@ import com.android.systemui.R;
 
 import javax.inject.Inject;
 
-public class ReadingModeTile extends QSTileImpl<BooleanState> {
+public final class ReadingModeTile extends QSTileImpl<BooleanState> {
     private static final Icon sIcon = ResourceIcon.get(R.drawable.ic_qs_reader);
     private static final Intent sLiveDisplaySettingsIntent = new Intent("com.android.settings.LIVEDISPLAY_SETTINGS");
 

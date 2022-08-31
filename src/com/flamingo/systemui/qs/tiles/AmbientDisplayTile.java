@@ -48,7 +48,7 @@ import com.android.systemui.util.settings.SecureSettings;
 import javax.inject.Inject;
 
 /** Quick settings tile: Ambient Display **/
-public class AmbientDisplayTile extends QSTileImpl<BooleanState> {
+public final class AmbientDisplayTile extends QSTileImpl<BooleanState> {
 
     private static final Intent LOCK_SCREEN_SETTINGS = new Intent("android.settings.LOCK_SCREEN_SETTINGS");
 

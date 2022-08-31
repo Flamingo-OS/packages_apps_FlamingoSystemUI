@@ -44,7 +44,7 @@ import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import javax.inject.Inject;
 
 /** Quick settings tile: Sync **/
-public class SyncTile extends QSTileImpl<BooleanState> {
+public final class SyncTile extends QSTileImpl<BooleanState> {
 
     private static final Intent SYNC_SETTINGS = new Intent("android.settings.SYNC_SETTINGS")
         .addCategory(Intent.CATEGORY_DEFAULT);
