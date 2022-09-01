@@ -49,3 +49,11 @@ filegroup {
         "proguard.flags",
     ],
 }
+
+prebuilt_etc {
+    name: "privapp_permissions_systemui_flamingo",
+    system_ext_specific: true,
+    sub_dir: "permissions",
+    src: "privapp-permissions-systemui.flamingo.xml",
+    filename_from_src: true,
+}
