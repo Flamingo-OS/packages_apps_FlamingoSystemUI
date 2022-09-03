@@ -106,6 +106,9 @@
     <!-- Title of statusbar tuner -->
     <string name="status_bar_icons">Status bar icons</string>
 
+    <!-- Name of the VPN status bar icon. -->
+    <string name="status_bar_vpn">VPN</string>
+
     <!-- WiFi standard numbering on statusbar -->
     <string name="status_bar_wifi_standard">Wi-Fi standard number</string>
 
