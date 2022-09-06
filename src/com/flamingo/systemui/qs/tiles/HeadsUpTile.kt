@@ -76,7 +76,7 @@ class HeadsUpTile @Inject constructor(
     override fun newTileState() = BooleanState().apply {
         label = getTileLabel()
         icon = ResourceIcon.get(R.drawable.ic_message)
-        expandedAccessibilityClassName = Switch::class.java.simpleName!!
+        expandedAccessibilityClassName = Switch::class.simpleName
     }
 
     override protected fun handleClick(view: View?) {
