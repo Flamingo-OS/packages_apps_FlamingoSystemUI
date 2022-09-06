@@ -29,6 +29,9 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.ApplicationInfoFlags
+import android.content.pm.PackageManager.ComponentInfoFlags
+import android.content.pm.PackageManager.NameNotFoundException
 import android.database.ContentObserver
 import android.media.AudioManager
 import android.net.Uri
@@ -47,9 +50,9 @@ import com.android.internal.annotations.GuardedBy
 import com.android.internal.statusbar.IStatusBarService
 import com.android.keyguard.KeyguardUpdateMonitor
 import com.android.keyguard.KeyguardUpdateMonitorCallback
+import com.android.systemui.CoreStartable
 import com.android.systemui.Prefs
 import com.android.systemui.R
-import com.android.systemui.CoreStartable
 import com.android.systemui.dagger.SysUISingleton
 import com.android.systemui.dagger.qualifiers.Background
 import com.android.systemui.keyguard.ScreenLifecycle
@@ -545,8 +548,11 @@ class GameSpaceServiceDelegate @Inject constructor(
             return
         }
         val serviceInfo = try {
-            pm.getServiceInfo(serviceComponent, PackageManager.MATCH_SYSTEM_ONLY)
-        } catch(_: PackageManager.NameNotFoundException) {
+            pm.getServiceInfo(
+                serviceComponent,
+                ComponentInfoFlags.of(PackageManager.MATCH_SYSTEM_ONLY.toLong())
+            )
+        } catch(_: NameNotFoundException) {
             Log.wtf(TAG, "Service $serviceComponent not found")
             return
         }
@@ -757,8 +763,11 @@ class GameSpaceServiceDelegate @Inject constructor(
 
     private fun isGame(packageName: String): Boolean {
         val aInfo = try {
-            pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-        } catch (_: PackageManager.NameNotFoundException) {
+            pm.getApplicationInfo(
+                packageName,
+                ApplicationInfoFlags.of(PackageManager.GET_META_DATA.toLong())
+            )
+        } catch (_: NameNotFoundException) {
             Log.e(TAG, "$packageName does not exist")
             return false
         }
