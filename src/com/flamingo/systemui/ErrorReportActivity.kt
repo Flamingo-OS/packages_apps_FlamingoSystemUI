@@ -22,6 +22,8 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.ApplicationInfoFlags
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -46,10 +48,12 @@ class ErrorReportActivity : Activity() {
         val title: String
         val reportText: String
         try {
-            val report = intent.getParcelableExtra<ApplicationErrorReport>(Intent.EXTRA_BUG_REPORT)!!
-            val pm = packageManager
-            val ai = pm.getApplicationInfo(report.packageName, 0)
-            title = getString(R.string.error_report_title, ai.loadLabel(pm))
+            val report = intent.getParcelableExtra(Intent.EXTRA_BUG_REPORT, ApplicationErrorReport::class.java)!!
+            val ai = packageManager.getApplicationInfo(
+                report.packageName,
+                ApplicationInfoFlags.of(PackageManager.GET_META_DATA.toLong())
+            )
+            title = getString(R.string.error_report_title, ai.loadLabel(packageManager))
 
             reportText = errorReportToText(report)
         } catch (e: Exception) {
