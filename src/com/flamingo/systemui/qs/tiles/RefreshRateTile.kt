@@ -82,7 +82,9 @@ class RefreshRateTile @Inject constructor(
     private var ignoreSettingsChange = false
 
     init {
-        logD("defaultPeakRefreshRate = $defaultPeakRefreshRate")
+        logD {
+            "defaultPeakRefreshRate = $defaultPeakRefreshRate"
+        }
         val display: Display? = mContext.getSystemService(
             DisplayManager::class.java
         ).getDisplay(Display.DEFAULT_DISPLAY)
@@ -104,7 +106,9 @@ class RefreshRateTile @Inject constructor(
             Log.e(TAG, "No valid default display available")
         }
         supportedRefreshRates = refreshRates.sorted()
-        logD("supportedRefreshRates = $supportedRefreshRates")
+        logD {
+            "supportedRefreshRates = $supportedRefreshRates"
+        }
     }
 
     private fun getDefaultPeakRefreshRate(): Float {
@@ -134,26 +138,34 @@ class RefreshRateTile @Inject constructor(
         mContext.getString(R.string.refresh_rate_tile_label)
 
     override protected fun handleInitialize() {
-        logD("handleInitialize")
+        logD {
+            "handleInitialize"
+        }
         deviceConfigListener.startListening()
         settingsObserver.observe()
     }
 
     override protected fun handleClick(view: View?) {
-        logD("handleClick")
+        logD {
+            "handleClick"
+        }
         cycleToNextMode()
         refreshState()
     }
 
     override protected fun handleUpdateState(state: State, arg: Any?) {
         state.secondaryLabel = getTitle()
-        logD("handleUpdateState: secondaryLabel = ${state.secondaryLabel}")
+        logD {
+            "handleUpdateState: secondaryLabel = ${state.secondaryLabel}"
+        }
     }
 
     override fun getMetricsCategory(): Int = MetricsEvent.FLAMINGO
 
     override protected fun handleDestroy() {
-        logD("handleDestroy")
+        logD {
+            "handleDestroy"
+        }
         deviceConfigListener.stopListening()
         settingsObserver.unobserve()
         super.handleDestroy()
@@ -170,7 +182,9 @@ class RefreshRateTile @Inject constructor(
             defaultPeakRefreshRate,
             UserHandle.USER_CURRENT
         )
-        logD("cycleToNextMode: minRate = $minRate, maxRate = $maxRate")
+        logD {
+            "cycleToNextMode: minRate = $minRate, maxRate = $maxRate"
+        }
         when {
             minRate >= NO_CONFIG && maxRate > minRate -> {
                 // Auto mode, cycle to force default
@@ -191,7 +205,9 @@ class RefreshRateTile @Inject constructor(
     }
 
     private fun updateSettings(minRate: Float, maxRate: Float) {
-        logD("updateSettings: minRate = $minRate, maxRate = $maxRate")
+        logD {
+            "updateSettings: minRate = $minRate, maxRate = $maxRate"
+        }
         ignoreSettingsChange = true
         systemSettings.putFloatForUser(
             MIN_REFRESH_RATE,
@@ -217,7 +233,9 @@ class RefreshRateTile @Inject constructor(
             defaultPeakRefreshRate,
             UserHandle.USER_CURRENT
         )
-        logD("getTitle: minRate = $minRate, maxRate = $maxRate")
+        logD {
+            "getTitle: minRate = $minRate, maxRate = $maxRate"
+        }
         return if (minRate >= NO_CONFIG && maxRate > minRate) {
             mContext.getString(
                 R.string.refresh_rate_auto_mode_placeholder,
@@ -279,24 +297,25 @@ class RefreshRateTile @Inject constructor(
             // KEY_PEAK_REFRESH_RATE_DEFAULT value could be added, changed, removed or unchanged.
             // Just force a UI update for any case.
             defaultPeakRefreshRate = getDefaultPeakRefreshRate()
-            logD("onPropertiesChanged: defaultPeakRefreshRate = $defaultPeakRefreshRate")
+            logD {
+                "onPropertiesChanged: defaultPeakRefreshRate = $defaultPeakRefreshRate"
+            }
             refreshState()
         }
     }
 
     companion object {
-        private const val TAG = "RefreshRateTile"
-        private val DEBUG: Boolean
-            get() = Log.isLoggable(TAG, Log.DEBUG)
-
         private const val INVALID_REFRESH_RATE = -1f
         private const val NO_CONFIG = 0f
         private const val DEFAULT_REFRESH_RATE = 60f
 
         private val DisplaySettingsIntent = Intent("com.android.settings.DISPLAY_SETTINGS")
+
+        private val TAG = RefreshRateTile::class.simpleName
+        private val DEBUG = Log.isLoggable(TAG, Log.DEBUG)
         
-        private fun logD(msg: String) {
-            if (DEBUG) Log.d(TAG, msg)
+        private inline fun logD(crossinline msg: () -> String) {
+            if (DEBUG) Log.d(TAG, msg())
         }
     }
 }

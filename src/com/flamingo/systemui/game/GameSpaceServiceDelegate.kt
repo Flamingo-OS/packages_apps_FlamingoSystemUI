@@ -191,7 +191,9 @@ class GameSpaceServiceDelegate @Inject constructor(
 
     private val taskStackListener = object : TaskStackListener() {
         override fun onTaskStackChanged() {
-            logD("onTaskStackChanged")
+            logD {
+                "onTaskStackChanged"
+            }
             coroutineScope.launch {
                 val topApp = withContext(Dispatchers.Default) {
                     getTopApp()
@@ -353,7 +355,9 @@ class GameSpaceServiceDelegate @Inject constructor(
     private val gameSpaceIntent = Intent()
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            logD("onServiceConnected")
+            logD {
+                "onServiceConnected"
+            }
             iGameSpaceService = IGameSpaceService.Stub.asInterface(service)
             coroutineScope.launch {
                 iGameSpaceService?.let {
@@ -364,7 +368,9 @@ class GameSpaceServiceDelegate @Inject constructor(
                         it.onStateChanged(configCopy)
 
                         val topPackage = stateMutex.withLock { currentTopPackageName }
-                        logD("Showing game ui")
+                        logD {
+                            "Showing game ui"
+                        }
                         it.showGameUI(topPackage)
                     } catch (e: RemoteException) {
                         Log.e(TAG, "Failed to communicate with binder because", e)
@@ -417,9 +423,13 @@ class GameSpaceServiceDelegate @Inject constructor(
     private var screenLifecycleObserverRegistered = false
     private val screenLifecycleObserver = object : ScreenLifecycle.Observer {
         override fun onScreenTurnedOn() {
-            logD("onScreenTurnedOn")
+            logD {
+                "onScreenTurnedOn"
+            }
             if (keyguardUpdateMonitor.isKeyguardVisible()) {
-                logD("Keyguard is visible, registering keyguardUpdateMonitorCallback")
+                logD {
+                    "Keyguard is visible, registering keyguardUpdateMonitorCallback"
+                }
                 // Turn gaming mode back on when keyguard visibility changes.
                 if (!keyguardUpdateMonitorCallbackRegistered) {
                     keyguardUpdateMonitor.registerCallback(keyguardUpdateMonitorCallback)
@@ -429,7 +439,9 @@ class GameSpaceServiceDelegate @Inject constructor(
                 coroutineScope.launch {
                     val topPackage = stateMutex.withLock { currentTopPackageName }
                     if (topPackage != null) {
-                        logD("onScreenTurnedOn: Attempting to start game mode back")
+                        logD {
+                            "onScreenTurnedOn: Attempting to start game mode back"
+                        }
                         checkTopAppAndUpdateState(topPackage)
                     }
                 }
@@ -439,14 +451,18 @@ class GameSpaceServiceDelegate @Inject constructor(
                 // gaming mode back. If keyguard is not visible, game mode will be
                 // enabled back if a game is in foreground, if not, we don't have to
                 // observe screen lifecycle until a game is opened in the future.
-                logD("Removing screenLifecycleObserver")
+                logD {
+                    "Removing screenLifecycleObserver"
+                }
                 screenLifecycle.removeObserver(this)
                 screenLifecycleObserverRegistered = false
             }
         }
 
         override fun onScreenTurningOff() {
-            logD("onScreenTurningOff")
+            logD {
+                "onScreenTurningOff"
+            }
             coroutineScope.launch {
                 disableGameMode()
             }
@@ -456,17 +472,23 @@ class GameSpaceServiceDelegate @Inject constructor(
     private var keyguardUpdateMonitorCallbackRegistered = false
     private val keyguardUpdateMonitorCallback = object : KeyguardUpdateMonitorCallback() {
         override fun onKeyguardVisibilityChanged(showing: Boolean) {
-            logD("onKeyguardVisibilityChanged: showing = $showing")
+            logD {
+                "onKeyguardVisibilityChanged: showing = $showing"
+            }
             if (!showing) {
                 coroutineScope.launch {
                     val topPackage = stateMutex.withLock { currentTopPackageName }
                     if (topPackage != null) {
-                        logD("onKeyguardVisibilityChanged: Attempting to start game mode back")
+                        logD {
+                            "onKeyguardVisibilityChanged: Attempting to start game mode back"
+                        }
                         checkTopAppAndUpdateState(topPackage)
                     }
                 }
                 if (keyguardUpdateMonitorCallbackRegistered) {
-                    logD("Removing keyguardUpdateMonitorCallback")
+                    logD {
+                        "Removing keyguardUpdateMonitorCallback"
+                    }
                     // Unregister even if top package is not a game since we don't have
                     // to observe keyguard state until next screen off.
                     keyguardUpdateMonitor.removeCallback(this)
@@ -478,7 +500,9 @@ class GameSpaceServiceDelegate @Inject constructor(
 
     private var ringerModeObserverRegistered = false
     private val ringerModeObserver = Observer<Int> {
-        logD("Ringer mode changed to $it")
+        logD {
+            "Ringer mode changed to $it"
+        }
         coroutineScope.launch(Dispatchers.Default) {
             val configCopy = stateMutex.withLock {
                 gameSpaceConfig.putInt(CONFIG_RINGER_MODE, it)
@@ -537,7 +561,9 @@ class GameSpaceServiceDelegate @Inject constructor(
     }
 
     override fun start() {
-        logD("start")
+        logD {
+            "start"
+        }
         val serviceComponentString = mContext.getString(R.string.config_gameSpaceServiceComponent)
         if (serviceComponentString.isBlank()) {
             Log.i(TAG, "Not starting service since component is unavailable")
@@ -651,7 +677,9 @@ class GameSpaceServiceDelegate @Inject constructor(
             Log.e(TAG, "Failed to get focused root task info", e)
             null
         } ?: return null
-        logD("Task windowing mode = ${focusedRootTask.windowingMode}")
+        logD {
+            "Task windowing mode = ${focusedRootTask.windowingMode}"
+        }
         return when (focusedRootTask.windowingMode) {
             WindowConfiguration.WINDOWING_MODE_MULTI_WINDOW,
             WindowConfiguration.WINDOWING_MODE_SPLIT_SCREEN_PRIMARY,
@@ -665,7 +693,10 @@ class GameSpaceServiceDelegate @Inject constructor(
     }
 
     private suspend fun onTopAppChanged(packageName: String) {
-        logD("onTopAppChanged: currentTopPackageName = $currentTopPackageName, packageName = $packageName")
+        logD {
+            "onTopAppChanged: currentTopPackageName = $currentTopPackageName, " +
+            "packageName = $packageName"
+        }
         if (currentTopPackageName == packageName) return
         currentTopPackageName = packageName
         checkTopAppAndUpdateState(packageName, true)
@@ -673,7 +704,9 @@ class GameSpaceServiceDelegate @Inject constructor(
 
     private suspend fun checkTopAppAndUpdateState(packageName: String, topAppChanged: Boolean = false) {
         val selectedPackages = stateMutex.withLock { gameSpacePackages.toMutableList() }
-        logD("selectedPackages = $selectedPackages")
+        logD {
+            "selectedPackages = $selectedPackages"
+        }
         // Top package is in user selected package list, start game mode.
         if (selectedPackages.contains(packageName)) {
             enableGameMode(packageName, topAppChanged)
@@ -682,7 +715,9 @@ class GameSpaceServiceDelegate @Inject constructor(
             // Dynamic mode is enabled and top package is a game, but not in list.
             // Add it to list and start game mode.
             if (isDynamicMode && isGame(packageName)) {
-                logD("Dynamically adding $packageName to list")
+                logD {
+                    "Dynamically adding $packageName to list"
+                }
                 selectedPackages.add(packageName)
                 withContext(Dispatchers.IO) {
                     systemSettings.putStringForUser(
@@ -703,7 +738,9 @@ class GameSpaceServiceDelegate @Inject constructor(
     }
 
     private suspend fun enableGameMode(packageName: String, topAppChanged: Boolean) {
-        logD("enableGameMode")
+        logD {
+            "enableGameMode"
+        }
         stateMutex.withLock {
             enableGameModeLocked(packageName, topAppChanged)
         }
@@ -712,7 +749,9 @@ class GameSpaceServiceDelegate @Inject constructor(
     private suspend fun enableGameModeLocked(packageName: String, topAppChanged: Boolean) {
         if (gameModeEnabled) {
             if (topAppChanged) {
-                logD("Notify top app changed to binder")
+                logD {
+                    "Notify top app changed to binder"
+                }
                 try {
                     iGameSpaceService?.onGamePackageChanged(packageName) ?: run {
                         Log.wtf(TAG, "Failed to call onGamePackageChanged as service binder is null")
@@ -723,7 +762,9 @@ class GameSpaceServiceDelegate @Inject constructor(
             }
             return
         }
-        logD("Trying to bind")
+        logD {
+            "Trying to bind"
+        }
         val bound = try {
             mContext.bindServiceAsUser(
                 gameSpaceIntent,
@@ -736,7 +777,9 @@ class GameSpaceServiceDelegate @Inject constructor(
             false
         }
         if (bound) {
-            logD("Enabling game mode")
+            logD {
+                "Enabling game mode"
+            }
             mContext.registerReceiverAsUser(
                 broadcastReceiver,
                 UserHandle.SYSTEM,
@@ -796,7 +839,9 @@ class GameSpaceServiceDelegate @Inject constructor(
     }
 
     private suspend fun disableGameMode() {
-        logD("disableGameMode")
+        logD {
+            "disableGameMode"
+        }
         stateMutex.withLock {
             disableGameModeLocked()
         }
@@ -804,7 +849,9 @@ class GameSpaceServiceDelegate @Inject constructor(
 
     private suspend fun disableGameModeLocked() {
         if (!gameModeEnabled) return
-        logD("Disabling game mode")
+        logD {
+            "Disabling game mode"
+        }
         // We don't want anymore stop broadcasts, yeet.
         mContext.unregisterReceiver(broadcastReceiver)
         unregisterCallStateChangeListener()
@@ -862,17 +909,17 @@ class GameSpaceServiceDelegate @Inject constructor(
         }
 
     companion object {
-        private const val TAG = "GameSpaceServiceDelegate"
-        private val DEBUG = Log.isLoggable(TAG, Log.DEBUG)
-
         private const val SERVICE_PERMISSION = "com.flamingo.permission.MANAGE_GAMESPACE"
 
         private const val PACKAGE_DELIMITER = ";"
 
         private const val ACTION_STOP_GAME_MODE = "com.flamingo.gamespace.action.STOP_GAME_MODE"
 
-        private fun logD(msg: String) {
-            if (DEBUG) Log.d(TAG, msg)
+        private val TAG = GameSpaceServiceDelegate::class.simpleName
+        private val DEBUG = Log.isLoggable(TAG, Log.DEBUG)
+
+        private inline fun logD(crossinline msg: () -> String) {
+            if (DEBUG) Log.d(TAG, msg())
         }
     }
 }
