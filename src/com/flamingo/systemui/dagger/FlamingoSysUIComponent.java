@@ -22,6 +22,7 @@ import com.android.systemui.dagger.DependencyProvider;
 import com.android.systemui.dagger.SysUIComponent;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.SystemUIBinder;
+import com.flamingo.systemui.LiveDisplayInitReceiver;
 import com.google.android.systemui.smartspace.KeyguardSmartspaceController;
 
 import dagger.Subcomponent;
@@ -49,4 +50,7 @@ public interface FlamingoSysUIComponent extends SysUIComponent {
      */
     @SysUISingleton
     KeyguardSmartspaceController createKeyguardSmartspaceController();
+
+    @SysUISingleton
+    LiveDisplayInitReceiver getLiveDisplayInitReceiver();
 }

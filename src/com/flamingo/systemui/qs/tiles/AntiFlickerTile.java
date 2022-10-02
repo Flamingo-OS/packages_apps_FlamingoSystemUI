@@ -77,6 +77,7 @@ public final class AntiFlickerTile extends QSTileImpl<BooleanState> {
         final BooleanState state = new BooleanState();
         state.icon = sIcon;
         state.label = getTileLabel();
+        state.state = Tile.STATE_UNAVAILABLE;
         return state;
     }
 
@@ -101,15 +102,20 @@ public final class AntiFlickerTile extends QSTileImpl<BooleanState> {
 
     @Override
     public boolean isAvailable() {
-        if (mLiveDisplay.getConfig() == null) return false;
-        return mLiveDisplay.getConfig().hasFeature(FEATURE_ANTI_FLICKER);
+        return true;
     }
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         state.value = mLiveDisplay.isAntiFlickerEnabled();
         state.contentDescription = mContext.getString(R.string.quick_settings_anti_flicker);
-        state.state = (state.value ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+        final boolean isFeatureAvailable =
+            mLiveDisplay.getConfig() != null && mLiveDisplay.getConfig().hasFeature(FEATURE_ANTI_FLICKER);
+        if (isFeatureAvailable) {
+            state.state = (state.value ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+        } else {
+            state.state = Tile.STATE_UNAVAILABLE;
+        }
     }
 
     @Override

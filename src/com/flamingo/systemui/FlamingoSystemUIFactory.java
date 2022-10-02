@@ -40,7 +40,9 @@ public class FlamingoSystemUIFactory extends SystemUIFactory {
             throws ExecutionException, InterruptedException {
         super.init(context, fromTest);
         if (shouldInitializeComponents()) {
-            ((FlamingoSysUIComponent) getSysUIComponent()).createKeyguardSmartspaceController();
+            final FlamingoSysUIComponent component = (FlamingoSysUIComponent) getSysUIComponent();
+            component.createKeyguardSmartspaceController();
+            component.getLiveDisplayInitReceiver().register();
         }
     }
 }

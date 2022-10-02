@@ -75,7 +75,6 @@ public final class LiveDisplayTile extends QSTileImpl<LiveDisplayState> {
     private final int[] mEntryIconRes;
 
     private final boolean mNightDisplayAvailable;
-    private final boolean mOutdoorModeAvailable;
 
     private boolean mListening;
     private int mDayTemperature;
@@ -114,11 +113,8 @@ public final class LiveDisplayTile extends QSTileImpl<LiveDisplayState> {
 
         mLiveDisplay = LiveDisplayManager.getInstance(mContext);
         if (mLiveDisplay.getConfig() != null) {
-            mOutdoorModeAvailable = mLiveDisplay.getConfig().hasFeature(MODE_OUTDOOR) &&
-                    !mLiveDisplay.getConfig().hasFeature(FEATURE_MANAGED_OUTDOOR_MODE);
             mDayTemperature = mLiveDisplay.getDayColorTemperature();
         } else {
-            mOutdoorModeAvailable = false;
             mDayTemperature = -1;
         }
 
@@ -126,15 +122,22 @@ public final class LiveDisplayTile extends QSTileImpl<LiveDisplayState> {
         mObserver = new LiveDisplayObserver(mHandler);
     }
 
+    private boolean isOutdoorModeAvailable() {
+        return mLiveDisplay.getConfig() != null &&
+            mLiveDisplay.getConfig().hasFeature(MODE_OUTDOOR) &&
+            !mLiveDisplay.getConfig().hasFeature(FEATURE_MANAGED_OUTDOOR_MODE);
+    }
+
     @Override
     public boolean isAvailable() {
-        return !mNightDisplayAvailable || mOutdoorModeAvailable;
+        return true;
     }
 
     @Override
     public LiveDisplayState newTileState() {
         final LiveDisplayState state = new LiveDisplayState();
         state.label = getTileLabel();
+        state.state = Tile.STATE_UNAVAILABLE;
         return state;
     }
 
@@ -160,7 +163,11 @@ public final class LiveDisplayTile extends QSTileImpl<LiveDisplayState> {
         state.secondaryLabel = mEntries[state.mode];
         state.icon = ResourceIcon.get(mEntryIconRes[state.mode]);
         state.contentDescription = mDescriptionEntries[state.mode];
-        state.state = mLiveDisplay.getMode() != MODE_OFF ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
+        if (!mNightDisplayAvailable || isOutdoorModeAvailable()) {
+            state.state = mLiveDisplay.getMode() != MODE_OFF ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
+        } else {
+            state.state = Tile.STATE_UNAVAILABLE;
+        }
     }
 
     @Override
@@ -197,13 +204,14 @@ public final class LiveDisplayTile extends QSTileImpl<LiveDisplayState> {
         }
 
         int nextMode = 0;
+        final boolean isOutdoorModeAvailable = isOutdoorModeAvailable();
 
         while (true) {
             nextMode = Integer.valueOf(mValues[next]);
             // Skip outdoor mode if it's unsupported, skip the day setting
             // if it's the same as the off setting, and skip night display
             // on HWC2
-            if ((!mOutdoorModeAvailable && nextMode == MODE_OUTDOOR) ||
+            if ((!isOutdoorModeAvailable && nextMode == MODE_OUTDOOR) ||
                     (mDayTemperature == OFF_TEMPERATURE && nextMode == MODE_DAY) ||
                     (mNightDisplayAvailable && (nextMode == MODE_DAY || nextMode == MODE_NIGHT))) {
                 next++;
