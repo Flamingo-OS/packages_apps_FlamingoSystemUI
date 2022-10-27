@@ -57,6 +57,7 @@ import com.flamingo.systemui.qs.tiles.AntiFlickerTile;
 import com.flamingo.systemui.qs.tiles.CaffeineTile;
 import com.flamingo.systemui.qs.tiles.DataSwitchTile;
 import com.flamingo.systemui.qs.tiles.FPSInfoTile;
+import com.flamingo.systemui.qs.tiles.FlamingoBluetoothTile;
 import com.flamingo.systemui.qs.tiles.FlamingoNfcTile;
 import com.flamingo.systemui.qs.tiles.HeadsUpTile;
 import com.flamingo.systemui.qs.tiles.LiveDisplayTile;
@@ -86,6 +87,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
     private final Provider<DataSwitchTile> mDataSwitchTileProvider;
     private final Provider<FPSInfoTile> mFpsInfoTileProvider;
     private final Provider<HeadsUpTile> mHeadsUpTileProvider;
+    private final Provider<FlamingoBluetoothTile> mFlamingoBluetoothTileProvider;
 
     @Inject
     public FlamingoQSFactoryImpl(
@@ -132,7 +134,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         Provider<AODTile> aodTileProvider,
         Provider<DataSwitchTile> dataSwitchTileProvider,
         Provider<FPSInfoTile> fpsInfoTileProvider,
-        Provider<HeadsUpTile> headsUpTileProvider
+        Provider<HeadsUpTile> headsUpTileProvider,
+        Provider<FlamingoBluetoothTile> flamingoBluetoothTileProvider
     ) {
         super(
             qsHostLazy, customTileBuilderProvider, wifiTileProvider,
@@ -161,6 +164,7 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
         mDataSwitchTileProvider = dataSwitchTileProvider;
         mFpsInfoTileProvider = fpsInfoTileProvider;
         mHeadsUpTileProvider = headsUpTileProvider;
+        mFlamingoBluetoothTileProvider = flamingoBluetoothTileProvider;
     }
 
     @Override
@@ -193,6 +197,8 @@ public class FlamingoQSFactoryImpl extends QSFactoryImpl {
                 return mFpsInfoTileProvider.get();
             case "headsup":
                 return mHeadsUpTileProvider.get();
+            case "bt":
+                return mFlamingoBluetoothTileProvider.get();
             default:
                 return super.createTileInternal(tileSpec);
         }
