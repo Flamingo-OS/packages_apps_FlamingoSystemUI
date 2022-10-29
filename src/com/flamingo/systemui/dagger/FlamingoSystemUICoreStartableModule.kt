@@ -44,7 +44,6 @@ import com.android.systemui.util.leak.GarbageMonitor
 import com.android.systemui.volume.VolumeUI
 import com.android.systemui.wmshell.WMShell
 import com.flamingo.systemui.game.GameSpaceServiceDelegate
-import com.flamingo.systemui.theme.FlamingoThemeOverlayController
 
 import dagger.Binds
 import dagger.Module
@@ -176,8 +175,8 @@ abstract class FlamingoSystemUICoreStartableModule {
     /** Inject into ThemeOverlayController.  */
     @Binds
     @IntoMap
-    @ClassKey(FlamingoThemeOverlayController::class)
-    abstract fun bindThemeOverlayController(sysui: FlamingoThemeOverlayController): CoreStartable
+    @ClassKey(ThemeOverlayController::class)
+    abstract fun bindThemeOverlayController(sysui: ThemeOverlayController): CoreStartable
 
     /** Inject into ToastUI.  */
     @Binds
