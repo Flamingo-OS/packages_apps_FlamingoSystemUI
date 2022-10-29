@@ -57,7 +57,6 @@ import dev.kdrag0n.colorkt.data.Illuminants
 import dev.kdrag0n.colorkt.rgb.Srgb
 import dev.kdrag0n.colorkt.tristimulus.CieXyzAbs.Companion.toAbs
 import dev.kdrag0n.colorkt.ucs.lab.CieLab
-import dev.kdrag0n.monet.theme.ColorSwatch
 import dev.kdrag0n.monet.theme.DynamicColorScheme
 import dev.kdrag0n.monet.theme.MaterialYouTargets
 
@@ -133,8 +132,6 @@ class FlamingoThemeOverlayController @Inject constructor(
     private var cond: Zcam.ViewingConditions
     private var targets: MaterialYouTargets
 
-    private var dynamicColorScheme: DynamicColorScheme? = null
-
     init {
         with(secureSettings) {
             registerContentObserverForUser(MONET_ENGINE_ACCURATE_SHADES,
@@ -204,13 +201,11 @@ class FlamingoThemeOverlayController @Inject constructor(
         val colorScheme = DynamicColorScheme(
             targets = targets,
             seedColor = colorOverride?.takeIf { it.isNotEmpty() }
-                ?.let { Srgb(it) } ?: Srgb(color),
+                ?.let { Srgb(it) } ?: Srgb(primaryColor),
             chromaFactor = chromaFactor,
             cond = cond,
             accurateShades = accurateShades,
         )
-
-        dynamicColorScheme = colorScheme
 
         val (groupKey, colorsList) = when (type) {
             ACCENT -> "accent" to colorScheme.accentColors
@@ -219,11 +214,12 @@ class FlamingoThemeOverlayController @Inject constructor(
         }
 
         return FabricatedOverlay.Builder(context.packageName, groupKey, "android").run {
-            colorsList.forEachIndexed { index, swatch ->
-                val group = "$groupKey${index + 1}"
+            colorsList.withIndex().forEach { listEntry ->
+                val group = "$groupKey${listEntry.index + 1}"
 
-                swatch.forEach { (shade, color) ->
-                    setColor("system_${group}_$shade", color)
+                listEntry.value.forEach { (shade, color) ->
+                    val colorSrgb = color.convert<Srgb>()
+                    setColor("system_${group}_$shade", colorSrgb)
                 }
             }
 
@@ -243,30 +239,6 @@ class FlamingoThemeOverlayController @Inject constructor(
         }
     }
 
-    override protected fun getAccent1(): List<Int> {
-        return getArgbColors(dynamicColorScheme?.accentColors?.get(0))
-    }
-
-    override protected fun getAccent2(): List<Int> {
-        return getArgbColors(dynamicColorScheme?.accentColors?.get(1))
-    }
-
-    override protected fun getAccent3(): List<Int> {
-        return getArgbColors(dynamicColorScheme?.accentColors?.get(2))
-    }
-
-    override protected fun getNeutral1(): List<Int> {
-        return getArgbColors(dynamicColorScheme?.neutralColors?.get(0))
-    }
-
-    override protected fun getNeutral2(): List<Int> {
-        return getArgbColors(dynamicColorScheme?.neutralColors?.get(1))
-    }
-
-    private fun getArgbColors(swatch: ColorSwatch?): List<Int> {
-        return swatch?.values?.map { it.toArgb() } ?: emptyList()
-    }
-
     companion object {
 
         private const val WHITE_LUMINANCE_MIN = 1.0
@@ -283,16 +255,13 @@ class FlamingoThemeOverlayController @Inject constructor(
                     .coerceAtLeast(WHITE_LUMINANCE_MIN)
         }
 
-        private fun Color.toArgb(): Int {
-            return convert<Srgb>().toRgb8() or (0xff shl 24)
-        }
+        private fun FabricatedOverlay.Builder.setColor(name: String, @ColorInt color: Int) =
+            setResourceValue("android:color/$name", TypedValue.TYPE_INT_COLOR_ARGB8, color)
 
         private fun FabricatedOverlay.Builder.setColor(name: String, color: Color): FabricatedOverlay.Builder {
-            return setResourceValue(
-                "android:color/$name",
-                TypedValue.TYPE_INT_COLOR_ARGB8,
-                color.toArgb()
-            )
+            val rgb = color.convert<Srgb>().toRgb8()
+            val argb = rgb or (0xff shl 24)
+            return setColor(name, argb)
         }
     }
 }
