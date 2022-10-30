@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.flamingo.systemui
+package com.android.systemui
 
 import android.app.Activity
 import android.app.ApplicationErrorReport
@@ -37,8 +37,6 @@ import android.widget.LinearLayout.LayoutParams
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-
-import com.android.systemui.R
 
 class ErrorReportActivity : Activity() {
 

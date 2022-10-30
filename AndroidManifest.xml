@@ -65,7 +65,7 @@
         android:appComponentFactory=".SystemUIAppComponentFactory">
 
         <activity
-            android:name="com.flamingo.systemui.ErrorReportActivity"
+            android:name=".ErrorReportActivity"
             android:exported="true"
             android:theme="@android:style/Theme.DeviceDefault.DayNight"
             android:documentLaunchMode="always"
