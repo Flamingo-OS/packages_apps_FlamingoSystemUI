@@ -4,6 +4,9 @@ filegroup {
         "src/main/java/**/*.kt",
     ],
     path: "src/main/java",
+    visibility: [
+        "//packages/apps/FlamingoSystemUI",
+    ],
 }
 
 filegroup {
@@ -12,4 +15,7 @@ filegroup {
         "src/main/aidl/**/*.aidl",
     ],
     path: "src/main/aidl",
+    visibility: [
+        "//packages/apps/FlamingoSystemUI",
+    ],
 }

@@ -11,6 +11,9 @@ android_library {
     },
 
     resource_dirs: ["res"],
+    visibility: [
+        "//visibility:private",
+    ],
 }
 
 android_library {

@@ -20,6 +20,9 @@ filegroup {
         ":SystemUIGameLib-src",
         ":SystemUIGameLib-aidl",
     ],
+    visibility: [
+        "//frameworks/base/packages/SystemUI",
+    ],
 }
 
 genrule {
@@ -36,7 +39,10 @@ genrule {
     ],
     cmd: "INPUTS=($(in)) && "
         + "RES_DIR=$$(dirname $$(dirname $${INPUTS[0]})) && "
-        + "$(location soong_zip) -o $(out) -C $$RES_DIR -D $$RES_DIR"
+        + "$(location soong_zip) -o $(out) -C $$RES_DIR -D $$RES_DIR",
+    visibility: [
+        "//frameworks/base/packages/SystemUI",
+    ],
 }
 
 filegroup {
@@ -44,12 +50,18 @@ filegroup {
     srcs: [
         "AndroidManifest.xml",
     ],
+    visibility: [
+        "//frameworks/base/packages/SystemUI",
+    ],
 }
 
 filegroup {
     name: "FlamingoSystemUI_proguard_flags",
     srcs: [
         "proguard.flags",
+    ],
+    visibility: [
+        "//frameworks/base/packages/SystemUI",
     ],
 }
 
@@ -59,4 +71,7 @@ prebuilt_etc {
     sub_dir: "permissions",
     src: "privapp-permissions-systemui.flamingo.xml",
     filename_from_src: true,
+    visibility: [
+        "//frameworks/base/packages/SystemUI",
+    ],
 }
